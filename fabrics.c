@@ -69,7 +69,7 @@ static struct config {
 #define PATH_NVMF_DISC		"/etc/nvme/discovery.conf"
 #define PATH_NVMF_HOSTNQN	"/etc/nvme/hostnqn"
 #define PATH_NVMF_HOSTID	"/etc/nvme/hostid"
-#define SYS_NVME		"/sys/class/nvme"
+#define SYS_NVMF		"/sys/class/nvmf"
 #define MAX_DISC_ARGS		10
 
 enum {
@@ -255,7 +255,7 @@ static int remove_ctrl(int instance)
 	char *sysfs_path;
 	int ret;
 
-	if (asprintf(&sysfs_path, "/sys/class/nvme/nvme%d/delete_controller",
+	if (asprintf(&sysfs_path, "/sys/class/nvmf/nvmf%d/delete_controller",
 			instance) < 0) {
 		ret = errno;
 		goto out;
@@ -282,6 +282,8 @@ static int nvmf_get_log_page_discovery(const char *dev_path,
 	unsigned int log_size = 0;
 	unsigned long genctr;
 	int error, fd;
+
+	printf("%s\n", dev_path);
 
 	fd = open(dev_path, O_RDWR);
 	if (fd < 0) {
@@ -706,7 +708,7 @@ static int do_discover(char *argstr, bool connect)
 	if (instance < 0)
 		return instance;
 
-	if (asprintf(&dev_name, "/dev/nvme%d", instance) < 0)
+	if (asprintf(&dev_name, "/dev/nvmf%d", instance) < 0)
 		return errno;
 	ret = nvmf_get_log_page_discovery(dev_name, &log, &numrec);
 	free(dev_name);
@@ -895,9 +897,9 @@ static int disconnect_subsys(char *nqn, char *ctrl)
 	char subsysnqn[NVMF_NQN_SIZE] = {};
 	int fd, ret = 0;
 
-	if (asprintf(&sysfs_nqn_path, "%s/%s/subsysnqn", SYS_NVME, ctrl) < 0)
+	if (asprintf(&sysfs_nqn_path, "%s/%s/subsysnqn", SYS_NVMF, ctrl) < 0)
 		goto free;
-	if (asprintf(&sysfs_del_path, "%s/%s/delete_controller", SYS_NVME, ctrl) < 0)
+	if (asprintf(&sysfs_del_path, "%s/%s/delete_controller", SYS_NVMF, ctrl) < 0)
 		goto free;
 
 	fd = open(sysfs_nqn_path, O_RDONLY);
@@ -932,7 +934,7 @@ static int disconnect_by_nqn(char *nqn)
 	if (strlen(nqn) > NVMF_NQN_SIZE)
 		return -EINVAL;
 
-	n = scandir(SYS_NVME, &devices, scan_sys_nvme_filter, alphasort);
+	n = scandir(SYS_NVMF, &devices, scan_sys_nvme_filter, alphasort);
 	if (n < 0)
 		return n;
 
@@ -952,7 +954,7 @@ static int disconnect_by_device(char *device)
 	int ret;
 
 	device = basename(device);
-	ret = sscanf(device, "nvme%d", &instance);
+	ret = sscanf(device, "nvmf%d", &instance);
 	if (ret < 0)
 		return ret;
 	if (!ret)

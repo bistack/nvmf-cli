@@ -1482,7 +1482,7 @@ void json_print_list_items(struct list_item *list_items, unsigned len)
 					     "Firmware",
 					     formatter);
 
-		if (sscanf(list_items[i].node, "/dev/nvme%d", &index) == 1)
+		if (sscanf(list_items[i].node, "/dev/nvmf%d", &index) == 1)
 			json_object_add_value_int(device_attrs,
 						  "Index",
 						  index);

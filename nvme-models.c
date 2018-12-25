@@ -8,11 +8,11 @@
 #include <unistd.h>
 #include <errno.h>
 
-static char *_fmt1 = "/sys/class/nvme/nvme%d/device/subsystem_vendor";
-static char *_fmt2 = "/sys/class/nvme/nvme%d/device/subsystem_device";
-static char *_fmt3 = "/sys/class/nvme/nvme%d/device/vendor";
-static char *_fmt4 = "/sys/class/nvme/nvme%d/device/device";
-static char *_fmt5 = "/sys/class/nvme/nvme%d/device/class";
+static char *_fmt1 = "/sys/class/nvmf/nvmf%d/device/subsystem_vendor";
+static char *_fmt2 = "/sys/class/nvmf/nvmf%d/device/subsystem_device";
+static char *_fmt3 = "/sys/class/nvmf/nvmf%d/device/vendor";
+static char *_fmt4 = "/sys/class/nvmf/nvmf%d/device/device";
+static char *_fmt5 = "/sys/class/nvmf/nvmf%d/device/class";
 
 static char fmt1[78];
 static char fmt2[78];

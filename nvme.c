@@ -793,7 +793,7 @@ static char *nvme_char_from_block(char *block)
 		return NULL;
 	}
 
-	sscanf(block, "nvme%d", &len);
+	sscanf(block, "nvmf%d", &len);
 	sprintf(slen, "%d", len);
 	block[4 + strlen(slen)] = 0;
 
@@ -807,7 +807,7 @@ static void *get_registers(void)
 	void *membase;
 
 	base = nvme_char_from_block((char *)devicename);
-	sprintf(path, "/sys/class/nvme/%s/device/resource0", base);
+	sprintf(path, "/sys/class/nvmf/%s/device/resource0", base);
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		sprintf(path, "/sys/class/misc/%s/device/resource0", base);
@@ -826,7 +826,7 @@ static void *get_registers(void)
 	return membase;
 }
 
-static const char *subsys_dir = "/sys/class/nvme-subsystem/";
+static const char *subsys_dir = "/sys/class/nvmf-subsystem/";
 
 static char *get_nvme_subsnqn(char *path)
 {
@@ -955,7 +955,7 @@ static int scan_ctrls_filter(const struct dirent *d)
 		return 0;
 
 	if (strstr(d->d_name, "nvme")) {
-		if (sscanf(d->d_name, "nvme%dn%d", &id, &nsid) == 2)
+		if (sscanf(d->d_name, "nvmf%dn%d", &id, &nsid) == 2)
 			return 0;
 		return 1;
 	}
@@ -1239,7 +1239,7 @@ static int scan_dev_filter(const struct dirent *d)
 			return 0;
 		if (!S_ISBLK(bd.st_mode))
 			return 0;
-		if (sscanf(d->d_name, "nvme%dn%dp%d", &ctrl, &ns, &part) == 3)
+		if (sscanf(d->d_name, "nvmf%dn%dp%d", &ctrl, &ns, &part) == 3)
 			return 0;
 		return 1;
 	}
@@ -1785,7 +1785,7 @@ static int fw_commit(int argc, char **argv, struct command *cmd, struct plugin *
 	const char *desc = "Verify downloaded firmware image and "\
 		"commit to specific firmware slot. Device is not automatically "\
 		"reset following firmware activation. A reset may be issued "\
-		"with an 'echo 1 > /sys/class/nvme/nvmeX/reset_controller'. "\
+		"with an 'echo 1 > /sys/class/nvmf/nvmfX/reset_controller'. "\
 		"Ensure nvmeX is the device you just activated before reset.";
 	const char *slot = "[0-7]: firmware slot for commit action";
 	const char *action = "[0-7]: commit action";
