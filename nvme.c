@@ -1233,7 +1233,7 @@ static int scan_dev_filter(const struct dirent *d)
 	if (d->d_name[0] == '.')
 		return 0;
 
-	if (strstr(d->d_name, "nvme")) {
+	if (strstr(d->d_name, "nvmf")) {
 		snprintf(path, sizeof(path), "%s%s", dev, d->d_name);
 		if (stat(path, &bd))
 			return 0;
